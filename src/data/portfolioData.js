@@ -16,7 +16,7 @@ export const personalInfo = {
   location: "Prayagraj, India",
   phone: "+91 96963 67472",
   emails: {
-    primary: "aasimbha41@gmail.com",
+    primary: "aasimbhs41@gmail.com",
     secondary: "",
   },
   summary:
