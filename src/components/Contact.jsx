@@ -34,38 +34,40 @@ const Contact = () => {
       return;
     }
 
-    // Check if EmailJS is configured (checking both placeholder values and falsy states)
-    const isConfigured = 
-      emailjsConfig.serviceId && 
-      emailjsConfig.serviceId !== 'YOUR_EMAILJS_SERVICE_ID' &&
-      emailjsConfig.templateId && 
-      emailjsConfig.templateId !== 'YOUR_EMAILJS_TEMPLATE_ID' &&
-      emailjsConfig.publicKey && 
-      emailjsConfig.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY';
+    const accessKey = "4715d7d4-7e44-4537-97ad-be2236a60c70";
 
-    if (!isConfigured) {
-      // EmailJS not configured — fallback to prefilled mailto
+    if (accessKey === "YOUR_WEB3FORMS_ACCESS_KEY") {
+      // Fallback if key isn't provided yet
       const mailtoLink = `mailto:${personalInfo.emails.primary}?subject=Portfolio Contact from ${firstName} ${lastName}&body=${encodeURIComponent(`From: ${firstName} ${lastName}\nEmail: ${email}\n\n${message}`)}`;
-      window.open(mailtoLink, '_blank');
-      setStatus('success');
-      formRef.current.reset();
+      window.location.href = mailtoLink;
+      setStatus('error');
       setTimeout(() => setStatus('idle'), 3000);
       return;
     }
 
-    // EmailJS integration
+    const formData = new FormData();
+    formData.append("access_key", accessKey);
+    formData.append("name", `${firstName} ${lastName}`.trim());
+    formData.append("email", email);
+    formData.append("message", message);
+    formData.append("subject", "New Contact Form Submission from Portfolio");
+
     try {
-      const emailjs = await import('@emailjs/browser');
-      await emailjs.sendForm(
-        emailjsConfig.serviceId,
-        emailjsConfig.templateId,
-        formRef.current,
-        emailjsConfig.publicKey
-      );
-      setStatus('success');
-      formRef.current.reset();
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setStatus('success');
+        formRef.current.reset();
+      } else {
+        console.error('Web3Forms Error:', data);
+        setStatus('error');
+      }
     } catch (error) {
-      console.error('EmailJS Error:', error);
+      console.error('Web3Forms Catch Error:', error);
       setStatus('error');
     }
 
