@@ -12,10 +12,12 @@ import Certificates from './components/Certificates'
 import SoftSkills from './components/SoftSkills'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import ParticleNetwork from './components/ParticleNetwork'
 
 function App() {
   return (
     <>
+      <ParticleNetwork />
       <Preloader />
       <Navbar />
       <Hero />
